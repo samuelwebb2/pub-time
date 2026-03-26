@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pub Time</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --amber: #e8a022;
+  --amber-dark: #b37a10;
+  --cream: #fdf6e3;
+  --brown: #2c1a0e;
+  --brown-mid: #5c3317;
+  --foam: #f5edd6;
+  --shadow: rgba(44, 26, 14, 0.18);
+}
+
+html, body {
+  height: 100%;
+  background: var(--brown);
+  color: var(--cream);
+  font-family: 'DM Mono', monospace;
+  overflow-x: hidden;
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.4;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+/* Warm glow behind the card */
+.page::after {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(232, 160, 34, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(160deg, var(--foam) 0%, var(--cream) 60%, #f0e5c8 100%);
+  color: var(--brown);
+  border-radius: 4px;
+  padding: 3rem 2.5rem 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow:
+    0 2px 0 var(--amber),
+    0 4px 0 var(--amber-dark),
+    0 8px 40px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  border-top: 3px solid var(--amber);
+  animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pub-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brown-mid);
+  margin-bottom: 0.3rem;
+  opacity: 0.7;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--brown);
+  margin-bottom: 0.2rem;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--amber), transparent);
+  margin: 1.5rem 0;
+}
+
+/* Beer glass graphic */
+.glass-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0 1.5rem;
+  animation: rise 0.9s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.glass {
+  width: 64px;
+  height: 88px;
+  position: relative;
+}
+
+/* Fill bar inside the glass */
+.glass-fill {
+  position: absolute;
+  bottom: 8px;
+  left: 6px;
+  right: 6px;
+  background: linear-gradient(180deg, rgba(255,220,80,0.3) 0%, var(--amber) 100%);
+  border-radius: 0 0 4px 4px;
+  transition: height 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  height: 0;
+}
+
+.glass-foam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: radial-gradient(ellipse at 50% 0%, #fffdf5 60%, var(--foam) 100%);
+  border-radius: 50% 50% 0 0;
+  opacity: 0;
+  transition: opacity 0.5s 1s;
+}
+
+.big-number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 15vw, 4.5rem);
+  font-weight: 700;
+  color: var(--brown);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  animation: pop 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.unit {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: var(--brown-mid);
+  letter-spacing: 0.1em;
+  margin-top: 0.2rem;
+}
+
+.quip {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+  color: var(--brown-mid);
+  margin-top: 1.2rem;
+  line-height: 1.5;
+  animation: rise 0.7s 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  border-left: 2px solid var(--amber);
+  padding-left: 0.8rem;
+}
+
+.meta {
+  margin-top: 1.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  animation: rise 0.7s 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.meta-item {
+  background: rgba(92, 51, 23, 0.06);
+  border: 1px solid rgba(92, 51, 23, 0.12);
+  border-radius: 3px;
+  padding: 0.6rem 0.8rem;
+}
+
+.meta-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brown-mid);
+  opacity: 0.6;
+  margin-bottom: 0.2rem;
+}
+
+.meta-value {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--brown);
+}
+
+.footer-note {
+  margin-top: 1.5rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brown-mid);
+  opacity: 0.4;
+  text-align: center;
+}
+
+/* States */
+.state-closed {
+  text-align: center;
+}
+
+.state-closed .big-number {
+  font-size: clamp(2rem, 10vw, 3rem);
+  color: var(--brown-mid);
+}
+
+/* Sun arc decorative element */
+.sun-arc {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 10px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sun-arc circle {
+  fill: var(--amber);
+  opacity: 0.9;
+}
+```
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card" id="card">
+      <svg class="sun-arc" viewBox="0 0 80 20" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%)">
+        <circle cx="40" cy="10" r="6" fill="#e8a022"/>
+        <line x1="40" y1="0" x2="40" y2="4" stroke="#e8a022" stroke-width="1.5"/>
+        <line x1="52" y1="3" x2="49" y2="6" stroke="#e8a022" stroke-width="1.5"/>
+        <line x1="28" y1="3" x2="31" y2="6" stroke="#e8a022" stroke-width="1.5"/>
+      </svg>
+
+```
+  <div id="content">Loading...</div>
+
+  <div class="footer-note">London, UK · Refreshes on load</div>
+</div>
+```
+
+  </div>
+
+  <script>
+    const LONDON_LAT = 51.5074;
+    const LONDON_LNG = -0.1278;
+
+    function formatTime(date) {
+      return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' });
+    }
+
+    function getLondonNow() {
+      // Get current time as if in London
+      const now = new Date();
+      return now;
+    }
+
+    function getLondonHoursMinutes(date) {
+      // Parse hours and minutes in London timezone
+      const str = date.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/London' });
+      const [h, m] = str.split(':').map(Number);
+      return { h, m };
+    }
+
+    function getQuip(totalMins) {
+      if (totalMins <= 0) {
+        return "The sun's already called last orders. There's always tomorrow, champ.";
+      }
+      if (totalMins < 30) {
+        return "Barely time for a swift half. Drink fast, no dithering.";
+      }
+      if (totalMins < 60) {
+        return "One pint. Maybe two if you skip the crisps. No dawdling.";
+      }
+      if (totalMins < 90) {
+        return "A solid session window. Enough for a round or two and a bit of chat.";
+      }
+      if (totalMins < 120) {
+        return "Now we're talking. That's a proper after-work. Pace yourself.";
+      }
+      if (totalMins < 180) {
+        return "Luxurious. A long golden evening awaits. The garden's calling.";
+      }
+      return "That's not pub time, that's a whole lifestyle. Sensational.";
+    }
+
+    function getMoodIcon(totalMins) {
+      if (totalMins <= 0) return '🌑';
+      if (totalMins < 60) return '🍺';
+      if (totalMins < 120) return '🍻';
+      return '🌅';
+    }
+
+    function render() {
+      const now = getLondonNow();
+      const times = SunCalc.getTimes(now, LONDON_LAT, LONDON_LNG);
+      const sunset = times.sunset;
+
+      const { h: nowH, m: nowM } = getLondonHoursMinutes(now);
+      const pubOpenMins = 17 * 60 + 30; // 17:30 in minutes
+      const nowMins = nowH * 60 + nowM;
+
+      const sunsetH = getLondonHoursMinutes(sunset).h;
+      const sunsetM = getLondonHoursMinutes(sunset).m;
+      const sunsetTotalMins = sunsetH * 60 + sunsetM;
+
+      // Start counting from whichever is later: now or 17:30
+      const startMins = Math.max(nowMins, pubOpenMins);
+      const remainingMins = sunsetTotalMins - startMins;
+
+      const hours = Math.floor(Math.abs(remainingMins) / 60);
+      const mins = Math.abs(remainingMins) % 60;
+
+      const isPubOpen = nowMins >= pubOpenMins;
+      const isSunUp = remainingMins > 0;
+
+      let html = '';
+
+      html += `<div class="pub-name">The Pub O'Clock Calculator</div>`;
+      html += `<h1>Pub Time${isSunUp ? '' : ' is<br/>over'}</h1>`;
+      html += `<div class="divider"></div>`;
+
+      if (!isSunUp) {
+        html += `<div class="state-closed">`;
+        html += `<div class="glass-wrap"><svg viewBox="0 0 64 88" class="glass" xmlns="http://www.w3.org/2000/svg"><path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z" fill="none" stroke="#b37a10" stroke-width="2.5" stroke-linejoin="round"/></svg></div>`;
+        html += `<div class="big-number">Sun's down</div>`;
+        html += `</div>`;
+        html += `<div class="quip">${getQuip(-1)}</div>`;
+      } else {
+        const pct = Math.min(1, Math.max(0, remainingMins / 240)); // max fill at 4hrs
+
+        html += `<div class="glass-wrap">
+          <svg viewBox="0 0 64 88" class="glass" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+            <defs>
+              <clipPath id="glassClip">
+                <path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z"/>
+              </clipPath>
+            </defs>
+            <!-- Fill -->
+            <rect x="6" y="${88 - (80 * pct)}" width="52" height="${80 * pct}" 
+                  fill="url(#beerGrad)" clip-path="url(#glassClip)"/>
+            <!-- Foam -->
+            <ellipse cx="32" cy="${88 - (80 * pct)}" rx="23" ry="5" 
+                     fill="#fffdf5" clip-path="url(#glassClip)" opacity="${pct > 0.05 ? 1 : 0}"/>
+            <!-- Glass outline -->
+            <path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z" 
+                  fill="none" stroke="#b37a10" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Handle -->
+            <path d="M58 30 Q74 30 74 44 Q74 58 58 58" fill="none" stroke="#b37a10" stroke-width="2.5"/>
+            <defs>
+              <linearGradient id="beerGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#f5c842" stop-opacity="0.7"/>
+                <stop offset="100%" stop-color="#c07f10"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>`;
+
+        if (!isPubOpen) {
+          html += `<div class="unit">pub opens in</div>`;
+          const waitH = Math.floor((pubOpenMins - nowMins) / 60);
+          const waitM = (pubOpenMins - nowMins) % 60;
+          html += `<div class="big-number">${waitH > 0 ? waitH + 'h ' : ''}${waitM}m</div>`;
+          html += `<div class="unit">then you'll have ${hours}h ${mins}m of golden time</div>`;
+        } else {
+          html += `<div class="big-number">${hours > 0 ? hours + 'h ' : ''}${mins}m</div>`;
+          html += `<div class="unit">of daylight drinking time</div>`;
+        }
+
+        html += `<div class="quip">${getQuip(remainingMins)}</div>`;
+
+        html += `<div class="meta">
+          <div class="meta-item">
+            <div class="meta-label">Pub opens</div>
+            <div class="meta-value">17:30</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Sunset</div>
+            <div class="meta-value">${formatTime(sunset)}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Right now</div>
+            <div class="meta-value">${formatTime(now)} BST</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Verdict</div>
+            <div class="meta-value">${getMoodIcon(remainingMins)} ${remainingMins > 120 ? 'Cracking' : remainingMins > 60 ? 'Decent' : remainingMins > 0 ? 'Slim' : 'None'}</div>
+          </div>
+        </div>`;
+      }
+
+      document.getElementById('content').innerHTML = html;
+    }
+
+    render();
+  </script>
+
+</body>
+</html>
