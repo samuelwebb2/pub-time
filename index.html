@@ -238,6 +238,81 @@ h1 {
   color: var(--brown-mid);
 }
 
+.weather-bar {
+  margin-top: 1.5rem;
+  background: rgba(92, 51, 23, 0.06);
+  border: 1px solid rgba(92, 51, 23, 0.12);
+  border-radius: 3px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  animation: rise 0.7s 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.weather-left {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.weather-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.weather-desc {
+  font-size: 0.75rem;
+  color: var(--brown-mid);
+  line-height: 1.4;
+}
+
+.weather-desc strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--brown);
+  font-weight: 400;
+  margin-bottom: 0.1rem;
+}
+
+.weather-temp {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--brown);
+  white-space: nowrap;
+}
+
+.weather-verdict {
+  margin-top: 0.5rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  display: inline-block;
+  font-weight: 400;
+}
+
+.verdict-garden {
+  background: rgba(80, 160, 80, 0.12);
+  color: #3a7a3a;
+  border: 1px solid rgba(80, 160, 80, 0.25);
+}
+
+.verdict-inside {
+  background: rgba(150, 80, 40, 0.1);
+  color: var(--brown-mid);
+  border: 1px solid rgba(150, 80, 40, 0.2);
+}
+
+.verdict-marginal {
+  background: rgba(200, 150, 20, 0.1);
+  color: #7a5a10;
+  border: 1px solid rgba(200, 150, 20, 0.2);
+}
+
 /* Sun arc decorative element */
 .sun-arc {
   position: absolute;
@@ -281,42 +356,65 @@ h1 {
     const LONDON_LAT = 51.5074;
     const LONDON_LNG = -0.1278;
 
+    // WMO weather code → { label, icon }
+    const WMO_CODES = {
+      0:  { label: 'Clear skies',       icon: '☀️' },
+      1:  { label: 'Mainly clear',      icon: '🌤️' },
+      2:  { label: 'Partly cloudy',     icon: '⛅' },
+      3:  { label: 'Overcast',          icon: '☁️' },
+      45: { label: 'Foggy',             icon: '🌫️' },
+      48: { label: 'Icy fog',           icon: '🌫️' },
+      51: { label: 'Light drizzle',     icon: '🌦️' },
+      53: { label: 'Drizzle',           icon: '🌦️' },
+      55: { label: 'Heavy drizzle',     icon: '🌧️' },
+      61: { label: 'Light rain',        icon: '🌦️' },
+      63: { label: 'Rain',              icon: '🌧️' },
+      65: { label: 'Heavy rain',        icon: '🌧️' },
+      71: { label: 'Light snow',        icon: '🌨️' },
+      73: { label: 'Snow',              icon: '❄️' },
+      75: { label: 'Heavy snow',        icon: '❄️' },
+      80: { label: 'Rain showers',      icon: '🌦️' },
+      81: { label: 'Showers',           icon: '🌧️' },
+      82: { label: 'Heavy showers',     icon: '⛈️' },
+      95: { label: 'Thunderstorm',      icon: '⛈️' },
+      99: { label: 'Thunderstorm',      icon: '⛈️' },
+    };
+
+    function getWeatherInfo(code) {
+      return WMO_CODES[code] || { label: 'Variable', icon: '🌡️' };
+    }
+
+    // Garden verdict based on weather code + temp
+    function getGardenVerdict(code, temp) {
+      const isRainy = [51,53,55,61,63,65,80,81,82,95,99].includes(code);
+      const isGrim  = [45,48,71,73,75].includes(code);
+      const isCold  = temp < 10;
+      const isWarm  = temp >= 15;
+
+      if (isRainy || isGrim) return { cls: 'verdict-inside',   label: '🍺 Inside weather' };
+      if (isCold)            return { cls: 'verdict-inside',   label: '🧥 Stay in — it\'s cold' };
+      if (code <= 1 && isWarm) return { cls: 'verdict-garden', label: '🌿 Prime garden weather' };
+      if (code <= 3 && !isCold) return { cls: 'verdict-marginal', label: '🤔 Could go either way' };
+      return { cls: 'verdict-marginal', label: '🤷 Your call, mate' };
+    }
+
     function formatTime(date) {
       return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' });
     }
 
-    function getLondonNow() {
-      // Get current time as if in London
-      const now = new Date();
-      return now;
-    }
-
     function getLondonHoursMinutes(date) {
-      // Parse hours and minutes in London timezone
       const str = date.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/London' });
       const [h, m] = str.split(':').map(Number);
       return { h, m };
     }
 
     function getQuip(totalMins) {
-      if (totalMins <= 0) {
-        return "The sun's already called last orders. There's always tomorrow, champ.";
-      }
-      if (totalMins < 30) {
-        return "Barely time for a swift half. Drink fast, no dithering.";
-      }
-      if (totalMins < 60) {
-        return "One pint. Maybe two if you skip the crisps. No dawdling.";
-      }
-      if (totalMins < 90) {
-        return "A solid session window. Enough for a round or two and a bit of chat.";
-      }
-      if (totalMins < 120) {
-        return "Now we're talking. That's a proper after-work. Pace yourself.";
-      }
-      if (totalMins < 180) {
-        return "Luxurious. A long golden evening awaits. The garden's calling.";
-      }
+      if (totalMins <= 0)   return "The sun's already called last orders. There's always tomorrow, champ.";
+      if (totalMins < 30)   return "Barely time for a swift half. Drink fast, no dithering.";
+      if (totalMins < 60)   return "One pint. Maybe two if you skip the crisps. No dawdling.";
+      if (totalMins < 90)   return "A solid session window. Enough for a round or two and a bit of chat.";
+      if (totalMins < 120)  return "Now we're talking. That's a proper after-work. Pace yourself.";
+      if (totalMins < 180)  return "Luxurious. A long golden evening awaits. The garden's calling.";
       return "That's not pub time, that's a whole lifestyle. Sensational.";
     }
 
@@ -327,31 +425,46 @@ h1 {
       return '🌅';
     }
 
-    function render() {
-      const now = getLondonNow();
+    function buildWeatherHTML(weather) {
+      if (!weather) return '';
+      const info = getWeatherInfo(weather.code);
+      const verdict = getGardenVerdict(weather.code, weather.temp);
+      return `
+        <div class="weather-bar">
+          <div class="weather-left">
+            <div class="weather-icon">${info.icon}</div>
+            <div class="weather-desc">
+              <strong>${info.label}</strong>
+              <span class="weather-verdict ${verdict.cls}">${verdict.label}</span>
+            </div>
+          </div>
+          <div class="weather-temp">${Math.round(weather.temp)}°C</div>
+        </div>`;
+    }
+
+    function renderPage(weather) {
+      const now = new Date();
       const times = SunCalc.getTimes(now, LONDON_LAT, LONDON_LNG);
       const sunset = times.sunset;
 
       const { h: nowH, m: nowM } = getLondonHoursMinutes(now);
-      const pubOpenMins = 17 * 60 + 30; // 17:30 in minutes
+      const pubOpenMins = 17 * 60 + 30;
       const nowMins = nowH * 60 + nowM;
 
       const sunsetH = getLondonHoursMinutes(sunset).h;
       const sunsetM = getLondonHoursMinutes(sunset).m;
       const sunsetTotalMins = sunsetH * 60 + sunsetM;
 
-      // Start counting from whichever is later: now or 17:30
       const startMins = Math.max(nowMins, pubOpenMins);
       const remainingMins = sunsetTotalMins - startMins;
 
       const hours = Math.floor(Math.abs(remainingMins) / 60);
-      const mins = Math.abs(remainingMins) % 60;
+      const mins  = Math.abs(remainingMins) % 60;
 
       const isPubOpen = nowMins >= pubOpenMins;
-      const isSunUp = remainingMins > 0;
+      const isSunUp   = remainingMins > 0;
 
       let html = '';
-
       html += `<div class="pub-name">The Pub O'Clock Calculator</div>`;
       html += `<h1>Pub Time${isSunUp ? '' : ' is<br/>over'}</h1>`;
       html += `<div class="divider"></div>`;
@@ -363,7 +476,7 @@ h1 {
         html += `</div>`;
         html += `<div class="quip">${getQuip(-1)}</div>`;
       } else {
-        const pct = Math.min(1, Math.max(0, remainingMins / 240)); // max fill at 4hrs
+        const pct = Math.min(1, Math.max(0, remainingMins / 240));
 
         html += `<div class="glass-wrap">
           <svg viewBox="0 0 64 88" class="glass" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
@@ -371,24 +484,18 @@ h1 {
               <clipPath id="glassClip">
                 <path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z"/>
               </clipPath>
-            </defs>
-            <!-- Fill -->
-            <rect x="6" y="${88 - (80 * pct)}" width="52" height="${80 * pct}" 
-                  fill="url(#beerGrad)" clip-path="url(#glassClip)"/>
-            <!-- Foam -->
-            <ellipse cx="32" cy="${88 - (80 * pct)}" rx="23" ry="5" 
-                     fill="#fffdf5" clip-path="url(#glassClip)" opacity="${pct > 0.05 ? 1 : 0}"/>
-            <!-- Glass outline -->
-            <path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z" 
-                  fill="none" stroke="#b37a10" stroke-width="2.5" stroke-linejoin="round"/>
-            <!-- Handle -->
-            <path d="M58 30 Q74 30 74 44 Q74 58 58 58" fill="none" stroke="#b37a10" stroke-width="2.5"/>
-            <defs>
               <linearGradient id="beerGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="#f5c842" stop-opacity="0.7"/>
                 <stop offset="100%" stop-color="#c07f10"/>
               </linearGradient>
             </defs>
+            <rect x="6" y="${88 - (80 * pct)}" width="52" height="${80 * pct}"
+                  fill="url(#beerGrad)" clip-path="url(#glassClip)"/>
+            <ellipse cx="32" cy="${88 - (80 * pct)}" rx="23" ry="5"
+                     fill="#fffdf5" clip-path="url(#glassClip)" opacity="${pct > 0.05 ? 1 : 0}"/>
+            <path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z"
+                  fill="none" stroke="#b37a10" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M58 30 Q74 30 74 44 Q74 58 58 58" fill="none" stroke="#b37a10" stroke-width="2.5"/>
           </svg>
         </div>`;
 
@@ -416,7 +523,7 @@ h1 {
           </div>
           <div class="meta-item">
             <div class="meta-label">Right now</div>
-            <div class="meta-value">${formatTime(now)} BST</div>
+            <div class="meta-value">${formatTime(now)}</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">Verdict</div>
@@ -425,10 +532,34 @@ h1 {
         </div>`;
       }
 
+      html += buildWeatherHTML(weather);
+
       document.getElementById('content').innerHTML = html;
     }
 
-    render();
+    async function fetchWeather() {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LONDON_LAT}&longitude=${LONDON_LNG}&current=temperature_2m,weathercode&timezone=Europe%2FLondon`;
+        const res = await fetch(url);
+        const data = await res.json();
+        return {
+          temp: data.current.temperature_2m,
+          code: data.current.weathercode,
+        };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function init() {
+      // Render immediately without weather so it's snappy
+      renderPage(null);
+      // Then fetch weather and re-render
+      const weather = await fetchWeather();
+      renderPage(weather);
+    }
+
+    init();
   </script>
 
 </body>
