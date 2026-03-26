@@ -19,7 +19,6 @@
   --brown: #2c1a0e;
   --brown-mid: #5c3317;
   --foam: #f5edd6;
-  --shadow: rgba(44, 26, 14, 0.18);
 }
 
 html, body {
@@ -30,7 +29,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Grain texture overlay */
 body::before {
   content: '';
   position: fixed;
@@ -51,15 +49,12 @@ body::before {
   position: relative;
 }
 
-/* Warm glow behind the card */
 .page::after {
   content: '';
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px;
-  height: 600px;
+  width: 600px; height: 600px;
   background: radial-gradient(circle, rgba(232, 160, 34, 0.12) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
@@ -114,43 +109,13 @@ h1 {
   margin: 1.5rem 0;
 }
 
-/* Beer glass graphic */
 .glass-wrap {
   display: flex;
   justify-content: center;
   margin: 0.5rem 0 1.5rem;
-  animation: rise 0.9s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.glass {
-  width: 64px;
-  height: 88px;
-  position: relative;
-}
-
-/* Fill bar inside the glass */
-.glass-fill {
-  position: absolute;
-  bottom: 8px;
-  left: 6px;
-  right: 6px;
-  background: linear-gradient(180deg, rgba(255,220,80,0.3) 0%, var(--amber) 100%);
-  border-radius: 0 0 4px 4px;
-  transition: height 1.5s cubic-bezier(0.22, 1, 0.36, 1);
-  height: 0;
-}
-
-.glass-foam {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 16px;
-  background: radial-gradient(ellipse at 50% 0%, #fffdf5 60%, var(--foam) 100%);
-  border-radius: 50% 50% 0 0;
-  opacity: 0;
-  transition: opacity 0.5s 1s;
-}
+.glass { width: 64px; height: 88px; position: relative; }
 
 .big-number {
   font-family: 'Playfair Display', serif;
@@ -168,7 +133,6 @@ h1 {
 }
 
 .unit {
-  font-family: 'DM Mono', monospace;
   font-size: 0.75rem;
   font-weight: 300;
   color: var(--brown-mid);
@@ -183,7 +147,6 @@ h1 {
   color: var(--brown-mid);
   margin-top: 1.2rem;
   line-height: 1.5;
-  animation: rise 0.7s 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   border-left: 2px solid var(--amber);
   padding-left: 0.8rem;
 }
@@ -193,7 +156,6 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.8rem;
-  animation: rise 0.7s 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .meta-item {
@@ -214,7 +176,6 @@ h1 {
 
 .meta-value {
   font-size: 0.85rem;
-  font-weight: 400;
   color: var(--brown);
 }
 
@@ -228,106 +189,16 @@ h1 {
   text-align: center;
 }
 
-/* States */
-.state-closed {
-  text-align: center;
-}
-
+.state-closed { text-align: center; }
 .state-closed .big-number {
   font-size: clamp(2rem, 10vw, 3rem);
   color: var(--brown-mid);
 }
 
-.weather-bar {
-  margin-top: 1.5rem;
-  background: rgba(92, 51, 23, 0.06);
-  border: 1px solid rgba(92, 51, 23, 0.12);
-  border-radius: 3px;
-  padding: 0.9rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  animation: rise 0.7s 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.weather-left {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.weather-icon {
-  font-size: 1.8rem;
-  line-height: 1;
-}
-
-.weather-desc {
-  font-size: 0.75rem;
-  color: var(--brown-mid);
-  line-height: 1.4;
-}
-
-.weather-desc strong {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--brown);
-  font-weight: 400;
-  margin-bottom: 0.1rem;
-}
-
-.weather-temp {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--brown);
-  white-space: nowrap;
-}
-
-.weather-verdict {
-  margin-top: 0.5rem;
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 0.25rem 0.6rem;
-  border-radius: 2px;
-  display: inline-block;
-  font-weight: 400;
-}
-
-.verdict-garden {
-  background: rgba(80, 160, 80, 0.12);
-  color: #3a7a3a;
-  border: 1px solid rgba(80, 160, 80, 0.25);
-}
-
-.verdict-inside {
-  background: rgba(150, 80, 40, 0.1);
-  color: var(--brown-mid);
-  border: 1px solid rgba(150, 80, 40, 0.2);
-}
-
-.verdict-marginal {
-  background: rgba(200, 150, 20, 0.1);
-  color: #7a5a10;
-  border: 1px solid rgba(200, 150, 20, 0.2);
-}
-
-/* Sun arc decorative element */
 .sun-arc {
   position: absolute;
-  top: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 10px;
   overflow: visible;
   pointer-events: none;
-}
-
-.sun-arc circle {
-  fill: var(--amber);
-  opacity: 0.9;
 }
 ```
 
@@ -335,8 +206,8 @@ h1 {
 </head>
 <body>
   <div class="page">
-    <div class="card" id="card">
-      <svg class="sun-arc" viewBox="0 0 80 20" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%)">
+    <div class="card">
+      <svg class="sun-arc" viewBox="0 0 80 20" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:80px;height:20px;">
         <circle cx="40" cy="10" r="6" fill="#e8a022"/>
         <line x1="40" y1="0" x2="40" y2="4" stroke="#e8a022" stroke-width="1.5"/>
         <line x1="52" y1="3" x2="49" y2="6" stroke="#e8a022" stroke-width="1.5"/>
@@ -356,46 +227,31 @@ h1 {
     const LONDON_LAT = 51.5074;
     const LONDON_LNG = -0.1278;
 
-    // WMO weather code → { label, icon }
     const WMO_CODES = {
-      0:  { label: 'Clear skies',       icon: '☀️' },
-      1:  { label: 'Mainly clear',      icon: '🌤️' },
-      2:  { label: 'Partly cloudy',     icon: '⛅' },
-      3:  { label: 'Overcast',          icon: '☁️' },
-      45: { label: 'Foggy',             icon: '🌫️' },
-      48: { label: 'Icy fog',           icon: '🌫️' },
-      51: { label: 'Light drizzle',     icon: '🌦️' },
-      53: { label: 'Drizzle',           icon: '🌦️' },
-      55: { label: 'Heavy drizzle',     icon: '🌧️' },
-      61: { label: 'Light rain',        icon: '🌦️' },
-      63: { label: 'Rain',              icon: '🌧️' },
-      65: { label: 'Heavy rain',        icon: '🌧️' },
-      71: { label: 'Light snow',        icon: '🌨️' },
-      73: { label: 'Snow',              icon: '❄️' },
-      75: { label: 'Heavy snow',        icon: '❄️' },
-      80: { label: 'Rain showers',      icon: '🌦️' },
-      81: { label: 'Showers',           icon: '🌧️' },
-      82: { label: 'Heavy showers',     icon: '⛈️' },
-      95: { label: 'Thunderstorm',      icon: '⛈️' },
-      99: { label: 'Thunderstorm',      icon: '⛈️' },
+      0:  { label: 'Clear skies',   icon: '☀️' },
+      1:  { label: 'Mainly clear',  icon: '🌤️' },
+      2:  { label: 'Partly cloudy', icon: '⛅' },
+      3:  { label: 'Overcast',      icon: '☁️' },
+      45: { label: 'Foggy',         icon: '🌫️' },
+      48: { label: 'Icy fog',       icon: '🌫️' },
+      51: { label: 'Light drizzle', icon: '🌦️' },
+      53: { label: 'Drizzle',       icon: '🌦️' },
+      55: { label: 'Heavy drizzle', icon: '🌧️' },
+      61: { label: 'Light rain',    icon: '🌦️' },
+      63: { label: 'Rain',          icon: '🌧️' },
+      65: { label: 'Heavy rain',    icon: '🌧️' },
+      71: { label: 'Light snow',    icon: '🌨️' },
+      73: { label: 'Snow',          icon: '❄️' },
+      75: { label: 'Heavy snow',    icon: '❄️' },
+      80: { label: 'Rain showers',  icon: '🌦️' },
+      81: { label: 'Showers',       icon: '🌧️' },
+      82: { label: 'Heavy showers', icon: '⛈️' },
+      95: { label: 'Thunderstorm',  icon: '⛈️' },
+      99: { label: 'Thunderstorm',  icon: '⛈️' },
     };
 
     function getWeatherInfo(code) {
       return WMO_CODES[code] || { label: 'Variable', icon: '🌡️' };
-    }
-
-    // Garden verdict based on weather code + temp
-    function getGardenVerdict(code, temp) {
-      const isRainy = [51,53,55,61,63,65,80,81,82,95,99].includes(code);
-      const isGrim  = [45,48,71,73,75].includes(code);
-      const isCold  = temp < 10;
-      const isWarm  = temp >= 15;
-
-      if (isRainy || isGrim) return { cls: 'verdict-inside',   label: '🍺 Inside weather' };
-      if (isCold)            return { cls: 'verdict-inside',   label: '🧥 Stay in — it\'s cold' };
-      if (code <= 1 && isWarm) return { cls: 'verdict-garden', label: '🌿 Prime garden weather' };
-      if (code <= 3 && !isCold) return { cls: 'verdict-marginal', label: '🤔 Could go either way' };
-      return { cls: 'verdict-marginal', label: '🤷 Your call, mate' };
     }
 
     function formatTime(date) {
@@ -409,37 +265,13 @@ h1 {
     }
 
     function getQuip(totalMins) {
-      if (totalMins <= 0)   return "The sun's already called last orders. There's always tomorrow, champ.";
-      if (totalMins < 30)   return "Barely time for a swift half. Drink fast, no dithering.";
-      if (totalMins < 60)   return "One pint. Maybe two if you skip the crisps. No dawdling.";
-      if (totalMins < 90)   return "A solid session window. Enough for a round or two and a bit of chat.";
-      if (totalMins < 120)  return "Now we're talking. That's a proper after-work. Pace yourself.";
-      if (totalMins < 180)  return "Luxurious. A long golden evening awaits. The garden's calling.";
+      if (totalMins <= 0)  return "The sun's already called last orders. There's always tomorrow, champ.";
+      if (totalMins < 30)  return "Barely time for a swift half. Drink fast, no dithering.";
+      if (totalMins < 60)  return "One pint. Maybe two if you skip the crisps. No dawdling.";
+      if (totalMins < 90)  return "A solid session window. Enough for a round or two and a bit of chat.";
+      if (totalMins < 120) return "Now we're talking. That's a proper after-work. Pace yourself.";
+      if (totalMins < 180) return "Luxurious. A long golden evening awaits. The garden's calling.";
       return "That's not pub time, that's a whole lifestyle. Sensational.";
-    }
-
-    function getMoodIcon(totalMins) {
-      if (totalMins <= 0) return '🌑';
-      if (totalMins < 60) return '🍺';
-      if (totalMins < 120) return '🍻';
-      return '🌅';
-    }
-
-    function buildWeatherHTML(weather) {
-      if (!weather) return '';
-      const info = getWeatherInfo(weather.code);
-      const verdict = getGardenVerdict(weather.code, weather.temp);
-      return `
-        <div class="weather-bar">
-          <div class="weather-left">
-            <div class="weather-icon">${info.icon}</div>
-            <div class="weather-desc">
-              <strong>${info.label}</strong>
-              <span class="weather-verdict ${verdict.cls}">${verdict.label}</span>
-            </div>
-          </div>
-          <div class="weather-temp">${Math.round(weather.temp)}°C</div>
-        </div>`;
     }
 
     function renderPage(weather) {
@@ -463,6 +295,13 @@ h1 {
 
       const isPubOpen = nowMins >= pubOpenMins;
       const isSunUp   = remainingMins > 0;
+
+      // Weather tile content
+      const weatherInfo = weather ? getWeatherInfo(weather.code) : null;
+      const weatherValue = weather
+        ? `${weatherInfo.icon} ${Math.round(weather.temp)}°C`
+        : '—';
+      const weatherLabel = weather ? weatherInfo.label : 'Weather';
 
       let html = '';
       html += `<div class="pub-name">The Pub O'Clock Calculator</div>`;
@@ -526,13 +365,11 @@ h1 {
             <div class="meta-value">${formatTime(now)}</div>
           </div>
           <div class="meta-item">
-            <div class="meta-label">Verdict</div>
-            <div class="meta-value">${getMoodIcon(remainingMins)} ${remainingMins > 120 ? 'Cracking' : remainingMins > 60 ? 'Decent' : remainingMins > 0 ? 'Slim' : 'None'}</div>
+            <div class="meta-label">${weatherLabel}</div>
+            <div class="meta-value">${weatherValue}</div>
           </div>
         </div>`;
       }
-
-      html += buildWeatherHTML(weather);
 
       document.getElementById('content').innerHTML = html;
     }
@@ -542,19 +379,14 @@ h1 {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${LONDON_LAT}&longitude=${LONDON_LNG}&current=temperature_2m,weathercode&timezone=Europe%2FLondon`;
         const res = await fetch(url);
         const data = await res.json();
-        return {
-          temp: data.current.temperature_2m,
-          code: data.current.weathercode,
-        };
+        return { temp: data.current.temperature_2m, code: data.current.weathercode };
       } catch (e) {
         return null;
       }
     }
 
     async function init() {
-      // Render immediately without weather so it's snappy
       renderPage(null);
-      // Then fetch weather and re-render
       const weather = await fetchWeather();
       renderPage(weather);
     }
