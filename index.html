@@ -421,11 +421,12 @@
       const box = document.getElementById('pubs');
       box.hidden = false;
       box.innerHTML = '<div class="pubs-title">Nearest pubs</div><div class="pubs-note">Finding pubs near you…</div>';
-      // Fetch ALL pubs within range (no result cap) so the distance sort below
-      // sees every candidate. Overpass returns elements in id order, not by
-      // distance, so an earlier `out ... 60` cap could drop the nearest pubs.
+      // Fetch ALL pubs (and bars — some pubs are tagged amenity=bar) within range,
+      // with no result cap, so the distance sort below sees every candidate.
+      // Overpass returns elements in id order, not by distance, so an earlier
+      // `out ... 60` cap could silently drop the nearest pubs.
       const query = '[out:json][timeout:25];'
-        + 'nwr["amenity"="pub"](around:2000,' + lat + ',' + lon + ');'
+        + 'nwr["amenity"~"^(pub|bar)$"](around:2000,' + lat + ',' + lon + ');'
         + 'out center tags;';
       try {
         const res = await fetch('https://overpass-api.de/api/interpreter', {
@@ -466,13 +467,16 @@
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           place = { lat: pos.coords.latitude, lng: pos.coords.longitude, tz: null, label: 'Your location' };
-          document.getElementById('locLine').textContent = 'Showing: your location';
+          const acc = pos.coords.accuracy ? ' (±' + Math.round(pos.coords.accuracy) + ' m)' : '';
+          document.getElementById('locLine').textContent = 'Showing: your location' + acc;
           render();
           fetchWeather();
           fetchNearbyPubs(place.lat, place.lng);
         },
         () => { document.getElementById('locLine').textContent = 'Showing: London, UK (location denied)'; },
-        { timeout: 8000 }
+        // High accuracy asks the phone for GPS rather than coarse WiFi/IP location,
+        // which in dense cities can otherwise be hundreds of metres out.
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
       );
     }
 
