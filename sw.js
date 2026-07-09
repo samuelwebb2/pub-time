@@ -1,22 +1,24 @@
 // Pub Time service worker — offline support
-const CACHE = 'pubtime-v1';
+const CACHE = 'pubtime-v2';
 const CORE = [
   './',
   './index.html',
   './suncalc.js',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './README.md'
 ];
 
-// Precache core files so the app opens offline
+// Precache core files individually so one missing file can't break the whole SW.
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(CORE)).then(() => self.skipWaiting())
+    caches.open(CACHE).then((cache) =>
+      Promise.allSettled(CORE.map((url) => cache.add(url)))
+    ).then(() => self.skipWaiting())
   );
 });
 
-// Clean up old caches on activate
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -25,13 +27,10 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Cache-first for our own files; network-first (with cache fallback) for everything else.
-// The weather + counter APIs are always tried live, but if you're offline the app
-// still opens and the sunset maths still works.
+// Cache-first for our own files; network-first (cache fallback) for everything else.
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
-
   const url = new URL(req.url);
   const sameOrigin = url.origin === self.location.origin;
 
@@ -44,7 +43,6 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => cached))
     );
   } else {
-    // External (fonts, weather, counter): try network, fall back to cache if present
     event.respondWith(
       fetch(req).then((res) => {
         const copy = res.clone();

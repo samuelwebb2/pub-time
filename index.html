@@ -6,7 +6,6 @@
   <title>Pub Time</title>
   <meta name="description" content="How much daylight drinking time is there tonight?" />
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#e8a022" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -45,231 +44,150 @@
 
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 100;
-      opacity: 0.35;
+      pointer-events: none; z-index: 100; opacity: 0.35;
     }
 
     .page {
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
       position: relative;
     }
 
     .card {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       background: linear-gradient(160deg, var(--foam) 0%, var(--cream) 60%, #f0e5c8 100%);
       color: var(--brown);
       border-radius: 4px;
       padding: 3rem 2.5rem 2.5rem;
-      max-width: 480px;
-      width: 100%;
-      box-shadow:
-        0 2px 0 var(--amber),
-        0 4px 0 var(--amber-dark),
-        0 8px 40px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.8);
+      max-width: 480px; width: 100%;
+      box-shadow: 0 2px 0 var(--amber), 0 4px 0 var(--amber-dark), 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8);
       border-top: 3px solid var(--amber);
       animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+      text-align: center;
     }
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
     .pub-name {
       font-family: 'Playfair Display', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--brown-mid);
-      margin-bottom: 0.3rem;
-      opacity: 0.7;
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--brown-mid); margin-bottom: 0.3rem; opacity: 0.7;
     }
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 8vw, 2.8rem);
-      font-weight: 700;
-      line-height: 1.1;
-      color: var(--brown);
-      margin-bottom: 0.2rem;
+      font-size: clamp(2rem, 8vw, 2.8rem); font-weight: 700; line-height: 1.1; color: var(--brown);
     }
 
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--amber), transparent);
-      margin: 1.5rem 0;
-    }
+    .divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, var(--amber), transparent); margin: 1.5rem 0; }
 
     .glass-wrap { display: flex; justify-content: center; margin: 0.5rem 0 1.5rem; }
     .glass { width: 64px; height: 88px; }
 
     .big-number {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 15vw, 4.5rem);
-      font-weight: 700;
-      color: var(--brown);
-      line-height: 1;
-      letter-spacing: -0.02em;
-      animation: pop 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+      font-size: clamp(3rem, 15vw, 4.5rem); font-weight: 700; color: var(--brown);
+      line-height: 1; letter-spacing: -0.02em;
     }
+    .big-number.small { font-size: clamp(2rem, 10vw, 3rem); color: var(--brown-mid); }
 
-    @keyframes pop {
-      from { opacity: 0; transform: scale(0.85); }
-      to   { opacity: 1; transform: scale(1); }
-    }
+    .unit { font-size: 0.75rem; font-weight: 300; color: var(--brown-mid); letter-spacing: 0.1em; margin-top: 0.4rem; }
 
-    .unit {
-      font-size: 0.75rem;
-      font-weight: 300;
-      color: var(--brown-mid);
-      letter-spacing: 0.1em;
-      margin-top: 0.2rem;
+    /* Clock-off stepper */
+    .clockoff { margin-top: 1.6rem; }
+    .clockoff-label {
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--brown-mid); opacity: 0.75; margin-bottom: 0.5rem;
     }
+    .stepper { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .col { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+    .arrow {
+      border: 1px solid rgba(92,51,23,0.2); background: rgba(92,51,23,0.05);
+      color: var(--brown-mid); width: 46px; height: 30px; border-radius: 4px;
+      font-size: 0.8rem; cursor: pointer; line-height: 1; transition: background 0.15s ease, transform 0.1s ease;
+    }
+    .arrow:hover { background: rgba(232,160,34,0.25); }
+    .arrow:active { transform: translateY(1px); }
+    .num {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: 2rem; color: var(--brown); width: 46px; text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .colon { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2rem; color: var(--brown-mid); padding-bottom: 2px; }
 
     .quip {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(0.95rem, 3.5vw, 1.1rem);
-      color: var(--brown-mid);
-      margin-top: 1.2rem;
-      line-height: 1.5;
-      border-left: 2px solid var(--amber);
-      padding-left: 0.8rem;
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(0.95rem, 3.5vw, 1.1rem); color: var(--brown-mid);
+      margin-top: 1.4rem; line-height: 1.5; text-align: left;
+      border-left: 2px solid var(--amber); padding-left: 0.8rem;
     }
 
-    .meta {
-      margin-top: 1.8rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.8rem;
-    }
-
+    .meta { margin-top: 1.8rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
     .meta-item {
-      background: rgba(92, 51, 23, 0.06);
-      border: 1px solid rgba(92, 51, 23, 0.12);
-      border-radius: 3px;
-      padding: 0.6rem 0.8rem;
+      background: rgba(92, 51, 23, 0.06); border: 1px solid rgba(92, 51, 23, 0.12);
+      border-radius: 3px; padding: 0.6rem 0.8rem; text-align: left;
     }
-
-    .meta-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--brown-mid);
-      opacity: 0.6;
-      margin-bottom: 0.2rem;
-    }
-
+    .meta-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brown-mid); opacity: 0.6; margin-bottom: 0.2rem; }
     .meta-value { font-size: 0.85rem; color: var(--brown); }
 
-    .actions {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-    }
-
+    .actions { margin-top: 1.5rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .btn {
-      flex: 1;
-      min-width: 130px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.7rem 0.9rem;
-      border-radius: 3px;
-      border: 1px solid var(--amber-dark);
-      background: var(--amber);
-      color: var(--brown);
-      cursor: pointer;
+      flex: 1; min-width: 130px;
+      font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.7rem 0.9rem; border-radius: 3px; border: 1px solid var(--amber-dark);
+      background: var(--amber); color: var(--brown); cursor: pointer;
       transition: transform 0.1s ease, background 0.2s ease;
     }
     .btn:hover { background: #f0b23a; }
     .btn:active { transform: translateY(1px); }
-    .btn.secondary {
-      background: transparent;
-      color: var(--brown-mid);
-      border-color: rgba(92, 51, 23, 0.25);
-    }
+    .btn.secondary { background: transparent; color: var(--brown-mid); border-color: rgba(92, 51, 23, 0.25); }
     .btn.secondary:hover { background: rgba(92,51,23,0.06); }
     .btn[hidden] { display: none; }
 
-    .loc-line {
-      margin-top: 1rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--brown-mid);
-      opacity: 0.55;
-      text-align: center;
-    }
+    .loc-line { margin-top: 1rem; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brown-mid); opacity: 0.55; }
 
-    .pints {
-      margin-top: 0.5rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--brown-mid);
-      opacity: 0.55;
-      text-align: center;
+    /* Nearby pubs */
+    .pubs { margin-top: 1.2rem; text-align: left; }
+    .pubs[hidden] { display: none; }
+    .pubs-title { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brown-mid); opacity: 0.7; margin-bottom: 0.6rem; }
+    .pub-item {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem;
+      padding: 0.5rem 0; border-bottom: 1px solid rgba(92,51,23,0.1);
     }
-
-    .state-closed { text-align: center; }
-    .state-closed .big-number { font-size: clamp(2rem, 10vw, 3rem); color: var(--brown-mid); }
+    .pub-item:last-child { border-bottom: none; }
+    .pub-item a { color: var(--brown); text-decoration: none; font-size: 0.9rem; }
+    .pub-item a:hover { text-decoration: underline; }
+    .pub-dist { font-size: 0.72rem; color: var(--brown-mid); white-space: nowrap; opacity: 0.8; }
+    .pubs-note { font-size: 0.78rem; color: var(--brown-mid); opacity: 0.7; font-style: italic; }
 
     .sun-arc { position: absolute; overflow: visible; pointer-events: none; }
 
-    /* Guestbook */
-    .guestbook {
-      position: relative;
-      z-index: 1;
-      max-width: 480px;
-      width: 100%;
-      margin-top: 1.5rem;
-      background: rgba(253, 246, 227, 0.92);
-      border-radius: 4px;
-      padding: 1.5rem 1.5rem 1rem;
-      border-top: 3px solid var(--amber);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      animation: rise 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-    .guestbook h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--brown);
-      margin-bottom: 0.3rem;
-    }
-    .guestbook p {
-      font-size: 0.72rem;
-      color: var(--brown-mid);
-      margin-bottom: 1rem;
-      line-height: 1.5;
-    }
+    .footer-note { position: relative; z-index: 1; margin-top: 1.5rem; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(253, 246, 227, 0.75); text-align: center; }
+    .footer-note a { color: rgba(253, 246, 227, 0.9); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 
-    .footer-note {
-      position: relative;
-      z-index: 1;
-      margin-top: 1.5rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(253, 246, 227, 0.7);
-      text-align: center;
+    /* README modal */
+    .modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; padding: 1.5rem; background: rgba(20, 12, 6, 0.7); backdrop-filter: blur(3px); }
+    .modal.open { display: flex; }
+    .modal-panel {
+      background: var(--cream); color: var(--brown); border-radius: 6px; border-top: 4px solid var(--amber);
+      max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2rem 2rem 2.5rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
-
-    canvas#shareCanvas { display: none; }
+    .modal-close { position: sticky; top: 0; float: right; margin: -0.5rem -0.5rem 0 0; border: none; background: none; font-size: 1.6rem; line-height: 1; color: var(--brown-mid); cursor: pointer; }
+    .md h1 { font-size: 1.6rem; margin: 0.2rem 0 0.8rem; }
+    .md h2 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin: 1.4rem 0 0.5rem; color: var(--brown); }
+    .md h3 { font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; margin: 1.1rem 0 0.4rem; color: var(--amber-dark); }
+    .md p { font-size: 0.9rem; line-height: 1.6; margin: 0.5rem 0; color: var(--brown-mid); }
+    .md ul { margin: 0.5rem 0 0.5rem 1.2rem; }
+    .md li { font-size: 0.9rem; line-height: 1.6; color: var(--brown-mid); }
+    .md a { color: var(--amber-dark); }
+    .md code { background: rgba(92,51,23,0.1); padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.85em; }
+    .md hr { border: none; border-top: 1px solid rgba(92,51,23,0.2); margin: 1.2rem 0; }
+    .md em { color: var(--brown-mid); }
   </style>
 </head>
 <body>
@@ -282,56 +200,55 @@
         <line x1="28" y1="3" x2="31" y2="6" stroke="#e8a022" stroke-width="1.5"/>
       </svg>
 
-      <div id="content">Loading...</div>
+      <div id="content"></div>
 
       <div class="actions">
-        <button class="btn" id="shareBtn">📸 Share the verdict</button>
+        <button class="btn" id="shareBtn">🔗 Share your time</button>
         <button class="btn secondary" id="locBtn">📍 Use my location</button>
         <button class="btn secondary" id="installBtn" hidden>⬇️ Install app</button>
       </div>
 
       <div class="loc-line" id="locLine">Showing: London, UK</div>
-      <div class="pints" id="pints">🍺 pouring…</div>
+
+      <div class="pubs" id="pubs" hidden></div>
     </div>
 
-    <!-- Guestbook: pub recommendations via GitHub Discussions (giscus) -->
-    <div class="guestbook">
-      <h2>Leave a pub rec 🍻</h2>
-      <p>Know a cracking spot for golden-hour pints? Sign in with GitHub and drop it below.</p>
-      <div id="giscus-container">
-        <!-- The giscus embed is injected by script once configured. See setup notes. -->
-      <script src="https://giscus.app/client.js"
-              data-repo="samuelwebb2/pub-time"
-              data-repo-id="R_kgDORxPgXw"
-              data-category="Announcements"
-              data-category-id="DIC_kwDORxPgX84DA1Bp"
-              data-mapping="pathname"
-              data-strict="0"
-              data-reactions-enabled="1"
-              data-emit-metadata="0"
-              data-input-position="bottom"
-              data-theme="preferred_color_scheme"
-              data-lang="en"
-              crossorigin="anonymous"
-              async>
-      </script>
-      </div>
+    <div class="footer-note">
+      Made for London evenings · Works offline · <a id="aboutLink">🛠 How this works</a>
     </div>
-
-    <div class="footer-note">Made for London evenings · Works offline</div>
   </div>
 
-  <canvas id="shareCanvas" width="1080" height="1080"></canvas>
+  <!-- README modal -->
+  <div class="modal" id="modal">
+    <div class="modal-panel">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div class="md" id="readme">Loading…</div>
+    </div>
+  </div>
 
   <script>
-    /* ---------------- Config ---------------- */
+    /* ---------------- Config / state ---------------- */
     const LONDON = { lat: 51.5074, lng: -0.1278, tz: 'Europe/London', label: 'London, UK' };
-    const PINTS_KEY = 'samuelwebb_pubtime_pints_v1'; // unique counter key
-    const PINTS_URL = 'https://countapi.mileshilliard.com/api/v1/hit/' + PINTS_KEY;
-
-    // Active location — starts as London, may be replaced by geolocation.
     let place = { ...LONDON };
     let lastWeather = null;
+
+    // Clock-off time in minutes past midnight. Priority: URL ?off= > saved > default 17:30.
+    function loadClockOff() {
+      const p = new URLSearchParams(location.search).get('off');
+      if (p && /^\d{3,4}$/.test(p)) {
+        const s = p.padStart(4, '0');
+        const h = +s.slice(0, 2), m = +s.slice(2);
+        if (h < 24 && m < 60) return h * 60 + m;
+      }
+      try {
+        const saved = localStorage.getItem('clockOff');
+        if (saved !== null && !isNaN(+saved)) return +saved;
+      } catch (e) {}
+      return 17 * 60 + 30;
+    }
+    let clockOff = loadClockOff();
+    function saveClockOff() { try { localStorage.setItem('clockOff', String(clockOff)); } catch (e) {} }
+    const pad = (n) => String(n).padStart(2, '0');
 
     /* ---------------- Weather ---------------- */
     const WMO_CODES = {
@@ -347,7 +264,6 @@
     const weatherInfo = (code) => WMO_CODES[code] || { label:'Variable', icon:'🌡️' };
 
     /* ---------------- Time helpers ---------------- */
-    // If tz is null we use the device's local time; otherwise force that timezone.
     function fmtTime(date, tz) {
       const opts = { hour:'2-digit', minute:'2-digit' };
       if (tz) opts.timeZone = tz;
@@ -359,13 +275,14 @@
       const [h,m] = date.toLocaleString('en-GB', opts).split(':').map(Number);
       return { h, m };
     }
+    const fmtDur = (mins) => (Math.floor(mins/60) > 0 ? Math.floor(mins/60)+'h ' : '') + (mins%60) + 'm';
 
     function getQuip(mins) {
-      if (mins <= 0)  return "The sun's already called last orders. There's always tomorrow, champ.";
+      if (mins <= 0)  return "You'd clock off after the sun. Reset that time, you monster.";
       if (mins < 30)  return "Barely time for a swift half. Drink fast, no dithering.";
       if (mins < 60)  return "One pint. Maybe two if you skip the crisps. No dawdling.";
       if (mins < 90)  return "A solid session window. Enough for a round or two and a bit of chat.";
-      if (mins < 120) return "Now we're talking. That's a proper after-work. Pace yourself.";
+      if (mins < 120) return "Now we're talking. That's a proper evening. Pace yourself.";
       if (mins < 180) return "Luxurious. A long golden evening awaits. The garden's calling.";
       return "That's not pub time, that's a whole lifestyle. Sensational.";
     }
@@ -374,12 +291,10 @@
     function hexLerp(a, b, t) {
       const pa = [parseInt(a.slice(1,3),16), parseInt(a.slice(3,5),16), parseInt(a.slice(5,7),16)];
       const pb = [parseInt(b.slice(1,3),16), parseInt(b.slice(3,5),16), parseInt(b.slice(5,7),16)];
-      const c = pa.map((v,i) => Math.round(v + (pb[i]-v)*t));
-      return 'rgb(' + c.join(',') + ')';
+      return 'rgb(' + pa.map((v,i) => Math.round(v + (pb[i]-v)*t)).join(',') + ')';
     }
     function skyColors(pct, sunUp) {
-      if (!sunUp) return ['#14102a', '#0d0a1a']; // night
-      // stops from little-time (0) to lots-of-time (1)
+      if (!sunUp) return ['#14102a', '#0d0a1a'];
       const stops = [
         { p:0.0,  top:'#3a1530', bot:'#1a0e20' },
         { p:0.35, top:'#c2410c', bot:'#5a1e2e' },
@@ -397,31 +312,21 @@
     /* ---------------- Core compute ---------------- */
     function compute() {
       const now = new Date();
-      const times = SunCalc.getTimes(now, place.lat, place.lng);
-      const sunset = times.sunset;
-
+      const sunset = SunCalc.getTimes(now, place.lat, place.lng).sunset;
       const nowHM = hm(now, place.tz);
       const sunHM = hm(sunset, place.tz);
-      const pubOpenMins = 17*60 + 30;
       const nowMins = nowHM.h*60 + nowHM.m;
       const sunsetMins = sunHM.h*60 + sunHM.m;
-
-      const startMins = Math.max(nowMins, pubOpenMins);
-      const remaining = sunsetMins - startMins;
-
-      return { now, sunset, nowMins, sunsetMins, pubOpenMins, remaining,
-               isPubOpen: nowMins >= pubOpenMins, isSunUp: remaining > 0 };
+      const start = Math.max(nowMins, clockOff);
+      const golden = sunsetMins - start;
+      return { now, sunset, nowMins, sunsetMins, golden, sunUpNow: nowMins < sunsetMins, beforeClockOff: nowMins < clockOff };
     }
 
     /* ---------------- Render ---------------- */
     function render() {
       const s = compute();
-      const hours = Math.floor(Math.abs(s.remaining)/60);
-      const mins  = Math.abs(s.remaining) % 60;
-
-      // gradient
-      const pct = Math.min(1, Math.max(0, s.remaining/240));
-      const [top, bot] = skyColors(pct, s.isSunUp);
+      const pct = Math.min(1, Math.max(0, s.golden/240));
+      const [top, bot] = skyColors(pct, s.sunUpNow);
       document.body.style.setProperty('--sky-top', top);
       document.body.style.setProperty('--sky-bot', bot);
       document.querySelector('meta[name="theme-color"]').setAttribute('content', top);
@@ -432,16 +337,16 @@
 
       let html = '';
       html += '<div class="pub-name">The Pub O\'Clock Calculator</div>';
-      html += '<h1>Pub Time' + (s.isSunUp ? '' : ' is<br/>over') + '</h1>';
+      html += '<h1>Pub Time' + (s.sunUpNow ? '' : ' is over') + '</h1>';
       html += '<div class="divider"></div>';
 
-      if (!s.isSunUp) {
-        html += '<div class="state-closed">';
+      if (!s.sunUpNow) {
+        // Sun already set
         html += '<div class="glass-wrap"><svg viewBox="0 0 64 88" class="glass" xmlns="http://www.w3.org/2000/svg"><path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z" fill="none" stroke="#b37a10" stroke-width="2.5" stroke-linejoin="round"/></svg></div>';
-        html += '<div class="big-number">Sun\'s down</div></div>';
-        html += '<div class="quip">' + getQuip(-1) + '</div>';
+        html += '<div class="big-number small">Sun\'s down</div>';
+        html += '<div class="quip">The sun has already called last orders. There\'s always tomorrow, champ.</div>';
       } else {
-        const fill = Math.min(1, Math.max(0, s.remaining/240));
+        const fill = pct;
         html += '<div class="glass-wrap"><svg viewBox="0 0 64 88" class="glass" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">'
           + '<defs><clipPath id="glassClip"><path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z"/></clipPath>'
           + '<linearGradient id="beerGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f5c842" stop-opacity="0.7"/><stop offset="100%" stop-color="#c07f10"/></linearGradient></defs>'
@@ -450,22 +355,27 @@
           + '<path d="M10 8 L6 80 Q6 84 10 84 L54 84 Q58 84 58 80 L54 8 Z" fill="none" stroke="#b37a10" stroke-width="2.5" stroke-linejoin="round"/>'
           + '<path d="M58 30 Q74 30 74 44 Q74 58 58 58" fill="none" stroke="#b37a10" stroke-width="2.5"/></svg></div>';
 
-        if (!s.isPubOpen) {
-          const waitH = Math.floor((s.pubOpenMins - s.nowMins)/60);
-          const waitM = (s.pubOpenMins - s.nowMins) % 60;
-          html += '<div class="unit">pub opens in</div>';
-          html += '<div class="big-number">' + (waitH>0 ? waitH+'h ' : '') + waitM + 'm</div>';
-          html += '<div class="unit">then you\'ll have ' + hours + 'h ' + mins + 'm of golden time</div>';
+        if (s.golden > 0) {
+          html += '<div class="big-number">' + fmtDur(s.golden) + '</div>';
+          html += '<div class="unit">of golden time' + (s.beforeClockOff ? '' : ' left') + '</div>';
         } else {
-          html += '<div class="big-number">' + (hours>0 ? hours+'h ' : '') + mins + 'm</div>';
-          html += '<div class="unit">of daylight drinking time</div>';
+          html += '<div class="big-number small">No golden time</div>';
+          html += '<div class="unit">you\'d clock off after sunset</div>';
         }
 
-        html += '<div class="quip">' + getQuip(s.remaining) + '</div>';
+        // Clock-off stepper
+        html += '<div class="clockoff">'
+          + '<div class="clockoff-label">If you clock off at</div>'
+          + '<div class="stepper">'
+          + '<div class="col"><button class="arrow" data-act="hUp">▲</button><div class="num" id="offH">' + pad(Math.floor(clockOff/60)) + '</div><button class="arrow" data-act="hDn">▼</button></div>'
+          + '<div class="colon">:</div>'
+          + '<div class="col"><button class="arrow" data-act="mUp">▲</button><div class="num" id="offM">' + pad(clockOff%60) + '</div><button class="arrow" data-act="mDn">▼</button></div>'
+          + '</div></div>';
+
+        html += '<div class="quip">' + getQuip(s.golden) + '</div>';
+
         html += '<div class="meta">'
-          + '<div class="meta-item"><div class="meta-label">Pub opens</div><div class="meta-value">17:30</div></div>'
           + '<div class="meta-item"><div class="meta-label">Sunset</div><div class="meta-value">' + fmtTime(s.sunset, place.tz) + '</div></div>'
-          + '<div class="meta-item"><div class="meta-label">Right now</div><div class="meta-value">' + fmtTime(s.now, place.tz) + '</div></div>'
           + '<div class="meta-item"><div class="meta-label">' + wLabel + '</div><div class="meta-value">' + wValue + '</div></div>'
           + '</div>';
       }
@@ -473,7 +383,20 @@
       document.getElementById('content').innerHTML = html;
     }
 
-    /* ---------------- Weather fetch ---------------- */
+    /* ---------------- Stepper interaction ---------------- */
+    document.getElementById('content').addEventListener('click', (e) => {
+      const btn = e.target.closest('.arrow');
+      if (!btn) return;
+      const act = btn.dataset.act;
+      if (act === 'hUp') clockOff = (clockOff + 60) % 1440;
+      if (act === 'hDn') clockOff = (clockOff + 1440 - 60) % 1440;
+      if (act === 'mUp') clockOff = (clockOff + 15) % 1440;
+      if (act === 'mDn') clockOff = (clockOff + 1440 - 15) % 1440;
+      saveClockOff();
+      render();
+    });
+
+    /* ---------------- Weather ---------------- */
     async function fetchWeather() {
       try {
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + place.lat +
@@ -485,9 +408,58 @@
       render();
     }
 
+    /* ---------------- Nearby pubs (Overpass / OpenStreetMap) ---------------- */
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371000, toRad = (d) => d * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+      return 2 * R * Math.asin(Math.sqrt(a));
+    }
+    const fmtDist = (m) => m < 1000 ? Math.round(m/10)*10 + ' m' : (m/1000).toFixed(1) + ' km';
+
+    async function fetchNearbyPubs(lat, lon) {
+      const box = document.getElementById('pubs');
+      box.hidden = false;
+      box.innerHTML = '<div class="pubs-title">Nearest pubs</div><div class="pubs-note">Finding pubs near you…</div>';
+      const query = '[out:json][timeout:20];('
+        + 'node["amenity"="pub"](around:2000,' + lat + ',' + lon + ');'
+        + 'way["amenity"="pub"](around:2000,' + lat + ',' + lon + ');'
+        + ');out center tags 60;';
+      try {
+        const res = await fetch('https://overpass-api.de/api/interpreter', {
+          method: 'POST', body: 'data=' + encodeURIComponent(query)
+        });
+        const data = await res.json();
+        const pubs = (data.elements || [])
+          .map((el) => {
+            const plat = el.lat != null ? el.lat : (el.center && el.center.lat);
+            const plon = el.lon != null ? el.lon : (el.center && el.center.lon);
+            if (plat == null || plon == null || !el.tags || !el.tags.name) return null;
+            return { name: el.tags.name, lat: plat, lon: plon, dist: haversine(lat, lon, plat, plon) };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.dist - b.dist)
+          .slice(0, 6);
+
+        if (!pubs.length) {
+          box.innerHTML = '<div class="pubs-title">Nearest pubs</div><div class="pubs-note">No pubs within 2 km. Are you in a desert?</div>';
+          return;
+        }
+        let html = '<div class="pubs-title">Nearest pubs</div>';
+        for (const p of pubs) {
+          const maps = 'https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lon;
+          html += '<div class="pub-item"><a href="' + maps + '" target="_blank" rel="noopener">' + p.name + '</a>'
+                + '<span class="pub-dist">🚶 ' + fmtDist(p.dist) + '</span></div>';
+        }
+        box.innerHTML = html;
+      } catch (e) {
+        box.innerHTML = '<div class="pubs-title">Nearest pubs</div><div class="pubs-note">Couldn\'t load nearby pubs right now.</div>';
+      }
+    }
+
     /* ---------------- Geolocation ---------------- */
     function useMyLocation() {
-      if (!navigator.geolocation) return;
+      if (!navigator.geolocation) { document.getElementById('locLine').textContent = 'Location not supported'; return; }
       document.getElementById('locLine').textContent = 'Finding you…';
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -495,131 +467,86 @@
           document.getElementById('locLine').textContent = 'Showing: your location';
           render();
           fetchWeather();
+          fetchNearbyPubs(place.lat, place.lng);
         },
-        () => {
-          document.getElementById('locLine').textContent = 'Showing: London, UK (location denied)';
-        },
+        () => { document.getElementById('locLine').textContent = 'Showing: London, UK (location denied)'; },
         { timeout: 8000 }
       );
     }
 
-    /* ---------------- Share image ---------------- */
-    function roundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x+r, y);
-      ctx.arcTo(x+w, y, x+w, y+h, r);
-      ctx.arcTo(x+w, y+h, x, y+h, r);
-      ctx.arcTo(x, y+h, x, y, r);
-      ctx.arcTo(x, y, x+w, y, r);
-      ctx.closePath();
-    }
-
-    function drawShareImage() {
+    /* ---------------- Share (link with configured time) ---------------- */
+    async function shareTime() {
       const s = compute();
-      const hours = Math.floor(Math.abs(s.remaining)/60);
-      const mins  = Math.abs(s.remaining) % 60;
-      const canvas = document.getElementById('shareCanvas');
-      const ctx = canvas.getContext('2d');
-      const W = 1080, H = 1080;
-
-      const [top, bot] = skyColors(Math.min(1,Math.max(0,s.remaining/240)), s.isSunUp);
-      let g = ctx.createLinearGradient(0,0,0,H);
-      g.addColorStop(0, top); g.addColorStop(1, bot);
-      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-
-      // card
-      const cx=90, cy=140, cw=W-180, ch=H-280;
-      ctx.fillStyle = '#fdf6e3';
-      roundRect(ctx, cx, cy, cw, ch, 24); ctx.fill();
-      ctx.fillStyle = '#e8a022';
-      roundRect(ctx, cx, cy, cw, 12, 6); ctx.fill();
-
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#5c3317';
-      ctx.font = '28px "DM Mono", monospace';
-      ctx.fillText("THE PUB O'CLOCK CALCULATOR", W/2, cy+90);
-
-      ctx.fillStyle = '#2c1a0e';
-      ctx.font = 'bold 90px "Playfair Display", serif';
-      ctx.fillText(s.isSunUp ? 'Pub Time' : 'Pub Time is over', W/2, cy+190);
-
-      const bigText = !s.isSunUp ? "Sun's down"
-        : (!s.isPubOpen ? 'Opens ' + (Math.floor((s.pubOpenMins-s.nowMins)/60)>0 ? Math.floor((s.pubOpenMins-s.nowMins)/60)+'h ' : '') + ((s.pubOpenMins-s.nowMins)%60) + 'm'
-        : (hours>0 ? hours+'h ' : '') + mins + 'm');
-      ctx.fillStyle = '#2c1a0e';
-      ctx.font = 'bold 150px "Playfair Display", serif';
-      ctx.fillText(bigText, W/2, cy+380);
-
-      ctx.fillStyle = '#5c3317';
-      ctx.font = '30px "DM Mono", monospace';
-      ctx.fillText(s.isSunUp && s.isPubOpen ? 'of daylight drinking time' : '', W/2, cy+440);
-
-      // quip (wrapped)
-      ctx.font = 'italic 40px "Playfair Display", serif';
-      ctx.fillStyle = '#5c3317';
-      const quip = getQuip(s.isSunUp ? s.remaining : -1);
-      const words = quip.split(' ');
-      let line = '', yy = cy+540; const maxW = cw-120;
-      for (const w of words) {
-        const test = line + w + ' ';
-        if (ctx.measureText(test).width > maxW && line) {
-          ctx.fillText(line.trim(), W/2, yy); line = w + ' '; yy += 54;
-        } else line = test;
+      const offStr = pad(Math.floor(clockOff/60)) + pad(clockOff%60);
+      const url = location.origin + location.pathname + '?off=' + offStr;
+      const text = s.golden > 0
+        ? 'Clock off at ' + pad(Math.floor(clockOff/60)) + ':' + pad(clockOff%60) + ' and you\'ve got ' + fmtDur(s.golden) + ' of golden pub time 🍺'
+        : 'Pub time calculator 🍺';
+      if (navigator.share) {
+        try { await navigator.share({ title: 'Pub Time', text, url }); return; } catch (e) { if (e.name === 'AbortError') return; }
       }
-      ctx.fillText(line.trim(), W/2, yy);
-
-      // weather + sunset footer
-      ctx.font = '30px "DM Mono", monospace';
-      ctx.fillStyle = '#2c1a0e';
-      const wi = lastWeather ? weatherInfo(lastWeather.code) : null;
-      const wStr = lastWeather ? (wi.icon + ' ' + Math.round(lastWeather.temp) + '°C · ' + wi.label) : '';
-      ctx.fillText('Sunset ' + fmtTime(s.sunset, place.tz) + (wStr ? '   ' + wStr : ''), W/2, cy+ch-70);
-
-      ctx.fillStyle = 'rgba(253,246,227,0.85)';
-      ctx.font = '26px "DM Mono", monospace';
-      ctx.fillText('pubtime · ' + place.label, W/2, H-70);
-
-      return new Promise((res) => canvas.toBlob(res, 'image/png'));
-    }
-
-    async function shareVerdict() {
-      const blob = await drawShareImage();
-      if (!blob) return;
-      const file = new File([blob], 'pub-time.png', { type: 'image/png' });
-      const s = compute();
-      const mins = Math.abs(s.remaining);
-      const text = s.isSunUp
-        ? Math.floor(mins/60) + 'h ' + (mins%60) + 'm of pub time tonight 🍺'
-        : "Pub time's over for today 🌑";
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try { await navigator.share({ files: [file], text }); return; } catch (e) {}
-      }
-      // fallback: download
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'pub-time.png';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    /* ---------------- Pints counter ---------------- */
-    async function pourPint() {
-      const el = document.getElementById('pints');
       try {
-        const res = await fetch(PINTS_URL);
-        const data = await res.json();
-        const n = parseInt(data.value, 10);
-        el.textContent = '🍺 ' + n.toLocaleString('en-GB') + ' pints poured here';
+        await navigator.clipboard.writeText(url);
+        const btn = document.getElementById('shareBtn');
+        const orig = btn.textContent;
+        btn.textContent = '✓ Link copied';
+        setTimeout(() => { btn.textContent = orig; }, 1800);
       } catch (e) {
-        el.textContent = '';
+        prompt('Copy your link:', url);
       }
     }
+
+    /* ---------------- README modal ---------------- */
+    function mdToHtml(md) {
+      const esc = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const inline = (s) => esc(s)
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      const lines = md.split('\n');
+      let html = '', inList = false;
+      const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+      for (const raw of lines) {
+        const line = raw.replace(/\s+$/, '');
+        if (/^\s*[-*]\s+/.test(line)) {
+          if (!inList) { html += '<ul>'; inList = true; }
+          html += '<li>' + inline(line.replace(/^\s*[-*]\s+/, '')) + '</li>';
+          continue;
+        }
+        closeList();
+        if (/^###\s+/.test(line)) html += '<h3>' + inline(line.replace(/^###\s+/, '')) + '</h3>';
+        else if (/^##\s+/.test(line)) html += '<h2>' + inline(line.replace(/^##\s+/, '')) + '</h2>';
+        else if (/^#\s+/.test(line)) html += '<h1>' + inline(line.replace(/^#\s+/, '')) + '</h1>';
+        else if (/^---+$/.test(line)) html += '<hr>';
+        else if (line.trim() === '') { /* paragraph gap */ }
+        else html += '<p>' + inline(line) + '</p>';
+      }
+      closeList();
+      return html;
+    }
+
+    let readmeLoaded = false;
+    async function openReadme() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('open');
+      if (!readmeLoaded) {
+        try {
+          const res = await fetch('README.md');
+          const md = await res.text();
+          document.getElementById('readme').innerHTML = mdToHtml(md);
+          readmeLoaded = true;
+        } catch (e) {
+          document.getElementById('readme').innerHTML = '<p>Couldn\'t load the README. It lives in the repo if you want a look.</p>';
+        }
+      }
+    }
+    function closeReadme() { document.getElementById('modal').classList.remove('open'); }
 
     /* ---------------- PWA install ---------------- */
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
+      e.preventDefault(); deferredPrompt = e;
       document.getElementById('installBtn').hidden = false;
     });
     document.getElementById('installBtn').addEventListener('click', async () => {
@@ -629,21 +556,19 @@
       deferredPrompt = null;
       document.getElementById('installBtn').hidden = true;
     });
-
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      });
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
 
     /* ---------------- Wire up ---------------- */
-    document.getElementById('shareBtn').addEventListener('click', shareVerdict);
+    document.getElementById('shareBtn').addEventListener('click', shareTime);
     document.getElementById('locBtn').addEventListener('click', useMyLocation);
+    document.getElementById('aboutLink').addEventListener('click', openReadme);
+    document.getElementById('modalClose').addEventListener('click', closeReadme);
+    document.getElementById('modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeReadme(); });
 
-    render();          // instant paint (London, no weather)
-    fetchWeather();    // weather for London, re-render
-    pourPint();        // increment + show tally
-    // Auto-refresh the countdown every 30s so it stays live
+    render();
+    fetchWeather();
     setInterval(render, 30000);
   </script>
 </body>
