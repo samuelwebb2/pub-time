@@ -421,10 +421,12 @@
       const box = document.getElementById('pubs');
       box.hidden = false;
       box.innerHTML = '<div class="pubs-title">Nearest pubs</div><div class="pubs-note">Finding pubs near you…</div>';
-      const query = '[out:json][timeout:20];('
-        + 'node["amenity"="pub"](around:2000,' + lat + ',' + lon + ');'
-        + 'way["amenity"="pub"](around:2000,' + lat + ',' + lon + ');'
-        + ');out center tags 60;';
+      // Fetch ALL pubs within range (no result cap) so the distance sort below
+      // sees every candidate. Overpass returns elements in id order, not by
+      // distance, so an earlier `out ... 60` cap could drop the nearest pubs.
+      const query = '[out:json][timeout:25];'
+        + 'nwr["amenity"="pub"](around:2000,' + lat + ',' + lon + ');'
+        + 'out center tags;';
       try {
         const res = await fetch('https://overpass-api.de/api/interpreter', {
           method: 'POST', body: 'data=' + encodeURIComponent(query)
